@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026年保险资金配置策略 · 交互式调研报告</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #2b6cb0;
+            --accent-light: #4299e1;
+            --gold: #d69e2e;
+            --gold-light: #ecc94b;
+            --success: #38a169;
+            --danger: #e53e3e;
+            --warning: #dd6b20;
+            --surface: #f7fafc;
+            --surface-alt: #edf2f7;
+            --border: #e2e8f0;
+            --text: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans SC', 'Inter', -apple-system, sans-serif;
+            color: var(--text); background: var(--surface);
+            line-height: 1.7; font-size: 15px;
+        }
+
+        /* === HEADER === */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0; height: var(--header-height);
+            background: var(--primary); color: #fff; z-index: 100;
+            display: flex; align-items: center; padding: 0 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .header-title { font-size: 1.1rem; font-weight: 700; }
+        .header-badge {
+            margin-left: 1rem; padding: 0.2rem 0.6rem; border-radius: 12px;
+            background: rgba(255,255,255,0.15); font-size: 0.75rem;
+        }
+        .header-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+        .header-source {
+            font-size: 0.75rem; opacity: 0.7; cursor: pointer;
+            text-decoration: underline; text-underline-offset: 2px;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            position: fixed; top: var(--header-height); left: 0; bottom: 0;
+            width: var(--sidebar-width); background: #fff; border-right: 1px solid var(--border);
+            overflow-y: auto; padding: 1.5rem 0; z-index: 90;
+        }
+        .sidebar-section { padding: 0 1.25rem; margin-bottom: 1.5rem; }
+        .sidebar-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .nav-item {
+            display: block; padding: 0.5rem 1.25rem; font-size: 0.85rem;
+            color: var(--text-secondary); text-decoration: none;
+            border-left: 3px solid transparent; transition: all 0.2s;
+            cursor: pointer;
+        }
+        .nav-item:hover { background: var(--surface); color: var(--accent); }
+        .nav-item.active { border-left-color: var(--accent); color: var(--accent); background: rgba(66,153,225,0.05); font-weight: 500; }
+
+        /* Client Tabs in sidebar */
+        .client-tabs { display: flex; flex-direction: column; gap: 0.3rem; padding: 0 1rem; }
+        .client-tab {
+            padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.8rem;
+            cursor: pointer; border: 1px solid var(--border); transition: all 0.2s;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .client-tab:hover { border-color: var(--accent-light); }
+        .client-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .client-tab .tab-icon { font-size: 1rem; }
+        .client-tab .tab-label { font-weight: 500; }
+        .client-tab .tab-desc { font-size: 0.7rem; opacity: 0.7; }
+
+        /* === MAIN CONTENT === */
+        .main {
+            margin-left: var(--sidebar-width); margin-top: var(--header-height);
+            padding: 2rem 3rem 4rem; max-width: 900px;
+        }
+
+        /* === SECTIONS === */
+        .section { margin-bottom: 3rem; scroll-margin-top: calc(var(--header-height) + 1rem); }
+        .section-title {
+            font-size: 1.5rem; font-weight: 700; color: var(--primary);
+            margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .section-divider { width: 40px; height: 3px; background: var(--accent); border-radius: 2px; margin-bottom: 1.5rem; }
+
+        /* === CARDS === */
+        .card {
+            background: #fff; border-radius: 12px; padding: 1.5rem;
+            border: 1px solid var(--border); margin-bottom: 1rem;
+            transition: box-shadow 0.3s;
+        }
+        .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+        .card-title { font-size: 1rem; font-weight: 600; }
+
+        /* === METRICS ROW === */
+        .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .metric-card {
+            background: #fff; border-radius: 10px; padding: 1.25rem;
+            border: 1px solid var(--border); text-align: center;
+        }
+        .metric-value { font-size: 1.8rem; font-weight: 900; line-height: 1.2; }
+        .metric-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+        .metric-change { font-size: 0.7rem; margin-top: 0.25rem; }
+        .metric-up { color: var(--success); }
+        .metric-down { color: var(--danger); }
+
+        /* === COLLAPSIBLE === */
+        .collapsible { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.75rem; overflow: hidden; background: #fff; }
+        .collapsible-header {
+            padding: 1rem 1.25rem; display: flex; align-items: center; cursor: pointer;
+            font-weight: 500; gap: 0.5rem; transition: background 0.2s;
+        }
+        .collapsible-header:hover { background: var(--surface); }
+        .collapsible-icon { transition: transform 0.3s; font-size: 0.8rem; }
+        .collapsible.open .collapsible-icon { transform: rotate(90deg); }
+        .collapsible-body { padding: 0 1.25rem 1rem; display: none; }
+        .collapsible.open .collapsible-body { display: block; }
+
+        /* === CHART (CSS-based) === */
+        .chart-container { margin: 1rem 0; }
+        .bar-chart { display: flex; flex-direction: column; gap: 0.6rem; }
+        .bar-row { display: flex; align-items: center; gap: 0.75rem; }
+        .bar-label { width: 100px; font-size: 0.8rem; text-align: right; color: var(--text-secondary); flex-shrink: 0; }
+        .bar-track { flex: 1; height: 28px; background: var(--surface-alt); border-radius: 6px; overflow: hidden; position: relative; }
+        .bar-fill {
+            height: 100%; border-radius: 6px; display: flex; align-items: center; padding: 0 0.6rem;
+            font-size: 0.75rem; color: #fff; font-weight: 600; transition: width 0.8s ease;
+            position: relative;
+        }
+        .bar-fill .tooltip {
+            display: none; position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
+            background: var(--text); color: #fff; padding: 0.3rem 0.6rem; border-radius: 4px;
+            font-size: 0.7rem; white-space: nowrap;
+        }
+        .bar-fill:hover .tooltip { display: block; }
+        .bar-fill:hover { filter: brightness(1.1); }
+
+        /* === COMPARISON TABLE === */
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .compare-table th {
+            background: var(--primary); color: #fff; padding: 0.7rem 0.8rem;
+            text-align: left; font-weight: 500;
+        }
+        .compare-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .compare-table tr:hover td { background: rgba(66,153,225,0.03); }
+
+        /* === BADGES & TAGS === */
+        .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+        .badge-low { background: #c6f6d5; color: #22543d; }
+        .badge-mid { background: #fefcbf; color: #744210; }
+        .badge-high { background: #fed7d7; color: #822727; }
+        .badge-info { background: #bee3f8; color: #2a4365; }
+
+        /* === SOURCE CITATION === */
+        .source-ref {
+            display: inline-flex; align-items: center; gap: 0.2rem;
+            font-size: 0.7rem; color: var(--accent); cursor: pointer;
+            text-decoration: none; border-bottom: 1px dashed var(--accent-light);
+            padding: 0.1rem 0.3rem; border-radius: 2px;
+        }
+        .source-ref:hover { background: rgba(66,153,225,0.08); }
+        .source-list { margin-top: 2rem; padding: 1.5rem; background: #fff; border-radius: 10px; border: 1px solid var(--border); }
+        .source-list h3 { font-size: 0.9rem; margin-bottom: 0.75rem; }
+        .source-item { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.4rem; display: flex; gap: 0.5rem; }
+        .source-item a { color: var(--accent); text-decoration: none; }
+        .source-item a:hover { text-decoration: underline; }
+
+        /* === CLIENT PROFILE CARD === */
+        .profile-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #fff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+        }
+        .profile-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .profile-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+        .profile-tag { padding: 0.2rem 0.6rem; background: rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.75rem; }
+
+        /* === ALLOCATION PIE (CSS) === */
+        .allocation-visual { display: flex; align-items: center; gap: 2rem; margin: 1rem 0; flex-wrap: wrap; }
+        .allocation-ring {
+            width: 160px; height: 160px; border-radius: 50%; position: relative;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .allocation-center { font-size: 0.8rem; text-align: center; color: var(--text-secondary); }
+        .allocation-legend { display: flex; flex-direction: column; gap: 0.4rem; }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+        /* === RECOMMENDATION === */
+        .reco-card {
+            background: #fff; border: 1px solid var(--border); border-radius: 12px;
+            padding: 1.25rem; margin-bottom: 0.75rem; border-left: 4px solid var(--accent);
+            transition: all 0.2s;
+        }
+        .reco-card:hover { border-left-color: var(--gold); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .reco-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+        .reco-title { font-weight: 600; font-size: 0.95rem; }
+        .reco-detail { font-size: 0.8rem; color: var(--text-secondary); }
+        .reco-rationale { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; border-top: 1px solid var(--border); padding-top: 0.5rem; }
+
+        /* === TABS === */
+        .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 1.5rem; }
+        .tab-btn {
+            padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 500;
+            color: var(--text-muted); cursor: pointer; border: none; background: none;
+            border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+        }
+        .tab-btn:hover { color: var(--accent); }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 1.5rem; }
+        }
+
+        /* === PRINT === */
+        @media print {
+            .sidebar, .header { display: none; }
+            .main { margin: 0; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <span class="header-title">📊 2026年保险资金配置策略调研</span>
+    <span class="header-badge">AI 智能调研</span>
+    <div class="header-right">
+        <span class="header-source" onclick="document.getElementById('sources').scrollIntoView({behavior:'smooth'})">📎 数据来源</span>
+        <span style="font-size: 0.75rem; opacity: 0.6;">更新: 2026-05-12</span>
+    </div>
+</header>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+    <!-- Client Type Selection -->
+    <div class="sidebar-section">
+        <div class="sidebar-label">👤 客户画像选择</div>
+        <div class="client-tabs">
+            <div class="client-tab active" onclick="switchClient('conservative')">
+                <div>
+                    <div class="tab-label">🛡️ 稳健型客户</div>
+                    <div class="tab-desc">退休/临退，保本优先</div>
+                </div>
+            </div>
+            <div class="client-tab" onclick="switchClient('balanced')">
+                <div>
+                    <div class="tab-label">⚖️ 平衡型客户</div>
+                    <div class="tab-desc">中产家庭，稳中求进</div>
+                </div>
+            </div>
+            <div class="client-tab" onclick="switchClient('aggressive')">
+                <div>
+                    <div class="tab-label">🚀 进取型客户</div>
+                    <div class="tab-desc">年轻高收入，追求增值</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="sidebar-section">
+        <div class="sidebar-label">📑 报告目录</div>
+    </div>
+    <a class="nav-item active" onclick="scrollToSection('overview')">市场总览</a>
+    <a class="nav-item" onclick="scrollToSection('macro')">宏观环境</a>
+    <a class="nav-item" onclick="scrollToSection('comparison')">红利 vs 国债</a>
+    <a class="nav-item" onclick="scrollToSection('strategy')">配置策略</a>
+    <a class="nav-item" onclick="scrollToSection('recommendation')">个性化建议</a>
+    <a class="nav-item" onclick="scrollToSection('risk')">风险提示</a>
+    <a class="nav-item" onclick="scrollToSection('sources')">数据来源</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+    <!-- ===== SECTION: 市场总览 ===== -->
+    <section class="section" id="overview">
+        <h2 class="section-title">📈 市场总览</h2>
+        <div class="section-divider"></div>
+
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-value" style="color: var(--accent);">38.5<span style="font-size: 0.9rem;">万亿</span></div>
+                <div class="metric-label">保险资金运用余额</div>
+                <div class="metric-change metric-up">↑ 15.7% YoY</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" style="color: var(--gold);">4.89<span style="font-size: 0.9rem;">%</span></div>
+                <div class="metric-label">中证红利股息率</div>
+                <div class="metric-change">息差 3.13% vs 10Y国债</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" style="color: var(--primary);">2.218<span style="font-size: 0.9rem;">%</span></div>
+                <div class="metric-label">30年国债收益率</div>
+                <div class="metric-change metric-down">↓ 历史低位波动</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" style="color: var(--success);">41.95<span style="font-size: 0.9rem;">万亿</span></div>
+                <div class="metric-label">2026年末预计规模</div>
+                <div class="metric-change metric-up">+4.86万亿增量</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">2026年保险资金配置结构预测</span>
+                <a class="source-ref" href="#source-1">[1] 新浪财经</a>
+            </div>
+            <div class="chart-container">
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <span class="bar-label">债券</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: 78%; background: linear-gradient(90deg, #2b6cb0, #4299e1);">
+                                52% · +3.11万亿
+                                <span class="tooltip">占比52%，同比+1.57个百分点，增配3.11万亿元</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">股票</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: 34%; background: linear-gradient(90deg, #d69e2e, #ecc94b);">
+                                11.2% · +9633亿
+                                <span class="tooltip">占比11.2%，同比+1.13个百分点，增配9633亿元</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">存款</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: 20%; background: linear-gradient(90deg, #e53e3e, #fc8181);">
+                                7% · -1000亿
+                                <span class="tooltip">占比7%，同比-1.19个百分点，减配1000亿元</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">基金</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: 16%; background: linear-gradient(90deg, #38a169, #68d391);">
+                                5.5%
+                                <span class="tooltip">占比5.5%，增配3383亿元</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">长期股权</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: 22%; background: linear-gradient(90deg, #718096, #a0aec0);">
+                                7.6%
+                                <span class="tooltip">占比7.62%，增配3624亿元</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION: 宏观环境 ===== -->
+    <section class="section" id="macro">
+        <h2 class="section-title">🌍 宏观环境</h2>
+        <div class="section-divider"></div>
+
+        <div class="collapsible open">
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <span class="collapsible-icon">▶</span>
+                <span>低利率环境持续：固收资产收益率下行</span>
+            </div>
+            <div class="collapsible-body">
+                <p>2023年以来主要上市保险公司净投资收益率整体呈下行趋势。2025年四家上市保险公司平均净投资收益率为 <strong>3.37%</strong>，同比下降19.5BP。</p>
+                <p style="margin-top: 0.5rem;">30年国债收益率从2025年11月的 2.07% 低点回升至2026年4月的 2.218%，但仍处于历史低位。保险机构30年国债心理价位在 <strong>2.3%以上</strong>。<a class="source-ref" href="#source-2">[2] CEIC</a></p>
+                <p style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.85rem;"><strong>核心矛盾：</strong>保险负债成本（3%-5%）与新增固收收益率（约2-2.5%）的倒挂持续存在。</p>
+            </div>
+        </div>
+
+        <div class="collapsible">
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <span class="collapsible-icon">▶</span>
+                <span>"十五五"开局年：政策托底，结构性机遇</span>
+            </div>
+            <div class="collapsible-body">
+                <ul style="padding-left: 1.2rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <li>内需由"信心筑底"转向"非典型"复苏，PPI同比上行趋势已形成</li>
+                    <li>积极有为的宏观政策为经济稳增长保驾护航</li>
+                    <li>权益市场驱动力有望切换至基本面复苏</li>
+                    <li>中长期资金入市政策持续推动：大型国有保险公司每年新增保费30%用于投资A股</li>
+                </ul>
+                <a class="source-ref" href="#source-3" style="margin-top: 0.5rem; display: inline-block;">[3] 中国经济网</a>
+            </div>
+        </div>
+
+        <div class="collapsible">
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <span class="collapsible-icon">▶</span>
+                <span>会计准则全面切换：IFRS 9 & IFRS 17 影响</span>
+            </div>
+            <div class="collapsible-body">
+                <ul style="padding-left: 1.2rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <li><strong>IFRS 9</strong>：二永债无法通过SPPI测试，公允价值波动直接影响利润表</li>
+                    <li><strong>IFRS 17</strong>：分红险适用浮动收费法(VFA)，CSM吸收波动，利润更平滑</li>
+                    <li><strong>影响</strong>：分红险账户可增配二永债和TPL权益资产；传统险账户偏好OCI分类</li>
+                </ul>
+                <a class="source-ref" href="#source-1">[1] 新浪财经</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION: 红利 vs 国债 ===== -->
+    <section class="section" id="comparison">
+        <h2 class="section-title">⚔️ 红利资产 vs 长期国债</h2>
+        <div class="section-divider"></div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-compare', this)">对比分析</button>
+            <button class="tab-btn" onclick="switchTab('tab-dividend', this)">红利资产详解</button>
+            <button class="tab-btn" onclick="switchTab('tab-bond', this)">长期国债详解</button>
+        </div>
+
+        <div id="tab-compare" class="tab-content active">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">维度</th>
+                        <th style="width: 40%;">🏆 红利资产</th>
+                        <th style="width: 40%;">🛡️ 长期国债</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>当前收益</strong></td>
+                        <td>股息率 4.89%（中证红利） <span class="badge badge-info">高</span></td>
+                        <td>30年国债 2.218% <span class="badge badge-mid">低</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>息差优势</strong></td>
+                        <td>vs 10年国债息差 3.13%</td>
+                        <td>30年地方债较国债利差 18BP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>久期匹配</strong></td>
+                        <td>⚠️ 久期较短，不满足资负匹配</td>
+                        <td>✅ 20-30年完美匹配负债端</td>
+                    </tr>
+                    <tr>
+                        <td><strong>报表影响</strong></td>
+                        <td>⚠️ FVTPL波动进利润表（OCI可缓解）</td>
+                        <td>✅ AC/OCI分类，报表稳定</td>
+                    </tr>
+                    <tr>
+                        <td><strong>资本占用</strong></td>
+                        <td>⚠️ 风险因子0.27-0.4（持有3年+可降10%）</td>
+                        <td>✅ 利率债资本占用最低</td>
+                    </tr>
+                    <tr>
+                        <td><strong>政策支持</strong></td>
+                        <td>✅ 中长期资金入市、风险因子调降</td>
+                        <td>✅ 资负管理办法鼓励拉久期</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2026趋势</strong></td>
+                        <td>权益配比持续提升（万亿级迁移）</td>
+                        <td>超长地方债为配置主力</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); text-align: center;">
+                <strong>结论：非二选一，而是"固收打底 + 红利增收"的杠铃策略</strong>
+            </p>
+        </div>
+
+        <div id="tab-dividend" class="tab-content">
+            <div class="card">
+                <h3 style="color: var(--gold); margin-bottom: 0.75rem;">红利资产核心逻辑</h3>
+                <ul style="padding-left: 1.2rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <li><strong>收益替代</strong>：在固收收益率持续下行时，高股息股票承担"类债"功能</li>
+                    <li><strong>行业分布</strong>：银行股占保险重仓49.2%，公用事业6.1%，交运5.3%</li>
+                    <li><strong>国企改革</strong>：分红率提升趋势确定，SOE折价有望收窄</li>
+                    <li><strong>地缘避险</strong>：历次地缘冲突事件中红利类资产表现占优 <a class="source-ref" href="#source-4">[4]</a></li>
+                    <li><strong>中证红利指数</strong>：当前股息率4.89%，4%以上市值占比42%</li>
+                </ul>
+            </div>
+            <div class="card" style="border-left: 3px solid var(--danger);">
+                <h3 style="font-size: 0.9rem; color: var(--danger);">⚠️ 风险点</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">中证红利指数股息率已从5%+降至4.89%（投资回报率骤降）；当万亿级资金形成高度一致的配置偏好时，可能推升估值、压缩未来Alpha空间。</p>
+            </div>
+        </div>
+
+        <div id="tab-bond" class="tab-content">
+            <div class="card">
+                <h3 style="color: var(--accent); margin-bottom: 0.75rem;">长期国债配置逻辑</h3>
+                <ul style="padding-left: 1.2rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <li><strong>久期匹配</strong>：20-30年品种二级净买入占比达38.77%，拉久期趋势持续</li>
+                    <li><strong>地方债优选</strong>：保险对地方债配置占比48.91%，较国债利差约18BP</li>
+                    <li><strong>操作策略</strong>：逢高买入（30年国债≥2.3%），收益率下行时止盈</li>
+                    <li><strong>2026年发行</strong>：超长期特别国债1.3万亿元（20/30/50年期）<a class="source-ref" href="#source-5">[5]</a></li>
+                </ul>
+            </div>
+            <div class="card" style="border-left: 3px solid var(--warning);">
+                <h3 style="font-size: 0.9rem; color: var(--warning);">⚠️ 关注点</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">债市收益率曲线渐呈陡峭化，短期仍有下行压力，长期受基本面支撑存在缓慢上行压力。获取资本利得的难度上升，需更注重票息收益。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION: 配置策略 ===== -->
+    <section class="section" id="strategy">
+        <h2 class="section-title">🎯 配置策略框架</h2>
+        <div class="section-divider"></div>
+
+        <div class="card" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%); color: #fff; border: none;">
+            <h3 style="text-align: center; font-size: 1.1rem;">核心策略："固收打底 · 权益增收 · 杠铃配置 · 精细管理"</h3>
+            <p style="text-align: center; font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem;">保险资金正从"投资账户"进阶为"长期资本配置中枢"</p>
+        </div>
+
+        <h3 style="margin: 1.5rem 0 0.75rem; font-size: 1rem;">保险资金配置六大趋势 <a class="source-ref" href="#source-6">[6] 21经济网</a></h3>
+
+        <div class="collapsible open">
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <span class="collapsible-icon">▶</span>
+                <span>❶ 固收底仓：高票息 → 久期+稳定性</span>
+            </div>
+            <div class="collapsible-body">
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">固收资产首要功能不再是"赚多少票息"，而是"能否稳定支撑长期负债"。再投资风险已上升为比信用风险更重要的约束。各险企普遍倾向拉长久期、降低周转、锁定当前利率。</p>
+            </div>
+        </div>
+        <div class="collapsible">
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <span class="collapsible-icon">▶</span>
+                <span>❷ 权益占比：边际调整 → 万亿级结构性迁移</span>
+            </div>
+            <div class="collapsible-body">
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">2025年五大上市险企权益增量约1.3万亿元。固收在"拖"，权益在"补"——向权益要收益已从可选项变为必要条件。</p>
+            </div>
+        </div>
+        <div class="collapsible">
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <span class="collapsible-icon">▶</span>
+                <span>❸ 权益框架：三层结构重构（高股息+成长+会计友好）</span>
+            </div>
+            <div class="collapsible-body">
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">第一层：高股息底仓（银行、电力、煤炭）；第二层：科技成长（AI、半导体、创新药）；第三层：OCI会计友好型配置（波动不冲击利润）。</p>
+            </div>
+        </div>
+        <div class="collapsible">
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <span class="collapsible-icon">▶</span>
+                <span>❹ 会计准则：从结果变量变为前置约束</span>
+            </div>
+            <div class="collapsible-body">
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">资产不再只按风险收益分类，而是按风险收益、会计表现、资本占用和负债匹配共同分类。平安OCI项下股票浮盈超900亿元未计入当期利润。</p>
+            </div>
+        </div>
+        <div class="collapsible">
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <span class="collapsible-icon">▶</span>
+                <span>❺ 另类投资：信用下沉 → 资产质量+战略协同</span>
+            </div>
+            <div class="collapsible-body">
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">传统非标规模在缩（2025年债权投资计划同比降2555亿），另类投资正在"换结构"——转向REITs、ABS、高等级MBS等标准化工具。</p>
+            </div>
+        </div>
+        <div class="collapsible">
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <span class="collapsible-icon">▶</span>
+                <span>❻ 定位升级：从投资账户到长期资本配置中枢</span>
+            </div>
+            <div class="collapsible-body">
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">保险资金正从市场参与者转向长期资本提供者，同时承担资产负债匹配、长期收益获取、服务实体经济和稳定市场资金结构等多重功能。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION: 个性化建议 ===== -->
+    <section class="section" id="recommendation">
+        <h2 class="section-title">💡 个性化配置建议</h2>
+        <div class="section-divider"></div>
+
+        <!-- Conservative Profile -->
+        <div id="profile-conservative" class="client-profile">
+            <div class="profile-card">
+                <h3>🛡️ 稳健型客户画像</h3>
+                <p style="font-size: 0.85rem; opacity: 0.85;">50-65岁 · 退休/临退 · 资金量200-500万 · 核心诉求：保本+稳定现金流</p>
+                <div class="profile-tags">
+                    <span class="profile-tag">保本第一</span>
+                    <span class="profile-tag">稳定分红</span>
+                    <span class="profile-tag">低波动</span>
+                    <span class="profile-tag">抗通胀</span>
+                </div>
+            </div>
+
+            <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem;">推荐配置方案</h3>
+            <div class="allocation-visual">
+                <div class="allocation-ring" style="background: conic-gradient(#2b6cb0 0% 50%, #d69e2e 50% 75%, #38a169 75% 90%, #718096 90% 100%);">
+                    <div style="width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div class="allocation-center"><strong>稳健型</strong><br>配置</div>
+                    </div>
+                </div>
+                <div class="allocation-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: #2b6cb0;"></div>长期国债/地方债 50%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #d69e2e;"></div>高股息红利基金 25%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #38a169;"></div>分红型保险产品 15%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #718096;"></div>现金/货币基金 10%</div>
+                </div>
+            </div>
+
+            <div class="reco-card">
+                <div class="reco-header">
+                    <span class="reco-title">超长期国债ETF</span>
+                    <span class="badge badge-low">低风险</span>
+                </div>
+                <div class="reco-detail">30年国债ETF · 配置比重 30% · 锁定长期利率 · 久期匹配养老规划</div>
+                <div class="reco-rationale">💡 理财经理话术：当前30年国债收益率2.2%看似不高，但锁定长期利率后可规避未来利率继续下行的再投资风险，适合退休后20-30年的现金流规划。</div>
+            </div>
+            <div class="reco-card">
+                <div class="reco-header">
+                    <span class="reco-title">中证红利低波动100 ETF</span>
+                    <span class="badge badge-mid">中低风险</span>
+                </div>
+                <div class="reco-detail">股息率约5% · 配置比重 25% · 每季分红 · 低波动特征</div>
+                <div class="reco-rationale">💡 理财经理话术：红利低波动指数历次地缘冲突中表现占优，股息率近5%远超银行存款，且以银行、电力等防御型行业为主，适合替代到期存款。</div>
+            </div>
+            <div class="reco-card">
+                <div class="reco-header">
+                    <span class="reco-title">分红型年金保险</span>
+                    <span class="badge badge-low">低风险</span>
+                </div>
+                <div class="reco-detail">预定利率1.75%+浮动超额 · 配置比重 15% · 终身现金流</div>
+                <div class="reco-rationale">💡 理财经理话术：分红险在IFRS 17下利润更平滑，保险公司投资端优势可惠及保单持有人。当前演示利率上限3.5%，在存款利率持续下降的环境中仍有竞争力。</div>
+            </div>
+        </div>
+
+        <!-- Balanced Profile -->
+        <div id="profile-balanced" class="client-profile" style="display: none;">
+            <div class="profile-card" style="background: linear-gradient(135deg, #2c5282 0%, #2b6cb0 100%);">
+                <h3>⚖️ 平衡型客户画像</h3>
+                <p style="font-size: 0.85rem; opacity: 0.85;">35-50岁 · 中产家庭 · 资金量100-300万 · 核心诉求：稳中求进，兼顾子女教育</p>
+                <div class="profile-tags">
+                    <span class="profile-tag">适度增值</span>
+                    <span class="profile-tag">控制回撤</span>
+                    <span class="profile-tag">长期规划</span>
+                    <span class="profile-tag">税优考虑</span>
+                </div>
+            </div>
+
+            <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem;">推荐配置方案</h3>
+            <div class="allocation-visual">
+                <div class="allocation-ring" style="background: conic-gradient(#2b6cb0 0% 35%, #d69e2e 35% 60%, #38a169 60% 80%, #805ad5 80% 92%, #718096 92% 100%);">
+                    <div style="width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div class="allocation-center"><strong>平衡型</strong><br>配置</div>
+                    </div>
+                </div>
+                <div class="allocation-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: #2b6cb0;"></div>债券类资产 35%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #d69e2e;"></div>高股息+价值股 25%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #38a169;"></div>科技成长 20%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #805ad5;"></div>分红保险/养老 12%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #718096;"></div>黄金/另类 8%</div>
+                </div>
+            </div>
+
+            <div class="reco-card">
+                <div class="reco-header">
+                    <span class="reco-title">"固收+" 混合策略</span>
+                    <span class="badge badge-mid">中风险</span>
+                </div>
+                <div class="reco-detail">债券底仓(70%)+权益增强(30%) · 目标年化4-6% · 最大回撤控制5%以内</div>
+                <div class="reco-rationale">💡 理财经理话术：参照保险资管"固收打底+权益增收"策略，底仓配超长地方债锁定收益，权益部分精选高股息+科技成长双线布局，平滑波动的同时争取超额回报。</div>
+            </div>
+            <div class="reco-card">
+                <div class="reco-header">
+                    <span class="reco-title">沪深300红利 + 科创50 组合</span>
+                    <span class="badge badge-mid">中风险</span>
+                </div>
+                <div class="reco-detail">杠铃配置 · 红利防守(60%) + 科技进攻(40%) · 月度再平衡</div>
+                <div class="reco-rationale">💡 理财经理话术：这就是险资的"杠铃策略"简化版——一端是稳定分红的银行电力股，另一端是高成长的AI半导体，两头配置对冲波动。</div>
+            </div>
+            <div class="reco-card">
+                <div class="reco-header">
+                    <span class="reco-title">黄金ETF / 公募REITs</span>
+                    <span class="badge badge-mid">中风险</span>
+                </div>
+                <div class="reco-detail">多元分散 · 配置比重 8% · 与股债低相关 · 抗通胀</div>
+                <div class="reco-rationale">💡 理财经理话术：多家保险资管机构明确指出黄金配置价值较高，REITs提供稳定租金收益，两者与传统股债资产相关性低，是分散风险的有效工具。</div>
+            </div>
+        </div>
+
+        <!-- Aggressive Profile -->
+        <div id="profile-aggressive" class="client-profile" style="display: none;">
+            <div class="profile-card" style="background: linear-gradient(135deg, #2c5282 0%, #553c9a 100%);">
+                <h3>🚀 进取型客户画像</h3>
+                <p style="font-size: 0.85rem; opacity: 0.85;">25-40岁 · 高收入 · 资金量50-200万 · 核心诉求：财富快速增值，可承受较大波动</p>
+                <div class="profile-tags">
+                    <span class="profile-tag">高收益导向</span>
+                    <span class="profile-tag">长期持有</span>
+                    <span class="profile-tag">科技敏感</span>
+                    <span class="profile-tag">全球视野</span>
+                </div>
+            </div>
+
+            <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem;">推荐配置方案</h3>
+            <div class="allocation-visual">
+                <div class="allocation-ring" style="background: conic-gradient(#2b6cb0 0% 15%, #d69e2e 15% 35%, #38a169 35% 65%, #805ad5 65% 85%, #718096 85% 100%);">
+                    <div style="width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div class="allocation-center"><strong>进取型</strong><br>配置</div>
+                    </div>
+                </div>
+                <div class="allocation-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: #2b6cb0;"></div>债券/固收 15%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #d69e2e;"></div>高股息核心 20%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #38a169;"></div>科技成长 30%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #805ad5;"></div>海外/港股 20%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #718096;"></div>另类/黄金 15%</div>
+                </div>
+            </div>
+
+            <div class="reco-card">
+                <div class="reco-header">
+                    <span class="reco-title">AI + 半导体产业链</span>
+                    <span class="badge badge-high">高风险</span>
+                </div>
+                <div class="reco-detail">科创50/AI ETF/个股 · 配置比重 30% · 长期持有3年+</div>
+                <div class="reco-rationale">💡 理财经理话术：保险资管机构明确将科技作为核心配置方向——AI不是单一概念，上游(芯片)、中游(云服务)、下游(应用)都有结构性机会。科创板持有超2年的风险因子可降10%，对长期资金更友好。</div>
+            </div>
+            <div class="reco-card">
+                <div class="reco-header">
+                    <span class="reco-title">港股高股息 + 科技龙头</span>
+                    <span class="badge badge-high">中高风险</span>
+                </div>
+                <div class="reco-detail">恒生高股息率指数/港股通 · 配置比重 20% · 估值洼地</div>
+                <div class="reco-rationale">💡 理财经理话术：港股整体中性偏乐观，进入"慢牛"路径。保险资管建议重点关注过去2-3年被明显低估、基本面稳健的领域。港股红利资产股息率+价格回报双重收益，SOE改革还在加速。</div>
+            </div>
+            <div class="reco-card">
+                <div class="reco-header">
+                    <span class="reco-title">高股息做安全垫</span>
+                    <span class="badge badge-mid">中风险</span>
+                </div>
+                <div class="reco-detail">银行/电力/煤炭 · 配置比重 20% · 对冲科技波动</div>
+                <div class="reco-rationale">💡 理财经理话术：即使是激进组合也需要压舱石。高股息的银行股2025年全年跑赢大盘，且持有3年以上偿付能力风险因子降低10%——这是监管鼓励长期持有的信号。</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION: 风险提示 ===== -->
+    <section class="section" id="risk">
+        <h2 class="section-title">⚠️ 风险提示</h2>
+        <div class="section-divider"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="card" style="border-top: 3px solid var(--danger);">
+                <h3 style="color: var(--danger); font-size: 0.9rem; margin-bottom: 0.5rem;">📉 下行风险</h3>
+                <ul style="padding-left: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
+                    <li>利率中枢继续下行，再投资风险加剧</li>
+                    <li>地缘冲突升级，权益市场大幅波动</li>
+                    <li>红利资产估值拥挤，Alpha空间压缩</li>
+                    <li>偿付能力下滑限制权益配置空间</li>
+                    <li>分红险演示利率下调影响销售</li>
+                </ul>
+            </div>
+            <div class="card" style="border-top: 3px solid var(--success);">
+                <h3 style="color: var(--success); font-size: 0.9rem; margin-bottom: 0.5rem;">📈 上行催化</h3>
+                <ul style="padding-left: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
+                    <li>PPI回升→顺周期板块结构性机会</li>
+                    <li>"十五五"政策加力→内需超预期复苏</li>
+                    <li>国企改革分红率继续提升</li>
+                    <li>IFRS 17全面实施利好分红险配置弹性</li>
+                    <li>中长期资金入市政策持续落地</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 1rem; background: #fffbeb; border-color: #f6e05e;">
+            <p style="font-size: 0.85rem; color: #744210; margin: 0;">
+                <strong>⚠️ 免责声明：</strong>本报告仅供内部学习参考，不构成任何投资建议。市场有风险，投资需谨慎。数据截至2026年5月，实际配置需根据客户KYC评估结果和市场最新变化调整。
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== SECTION: 数据来源 ===== -->
+    <section class="section" id="sources">
+        <h2 class="section-title">📎 数据来源</h2>
+        <div class="section-divider"></div>
+
+        <div class="source-list">
+            <div class="source-item" id="source-1">
+                <span style="color: var(--accent); font-weight: 600;">[1]</span>
+                <span>《2026年保险资金如何做配置？——机构行为精讲系列之五》—— <a href="https://finance.sina.com.cn/wm/2026-05-06/doc-inhwycsa8250468.shtml" target="_blank">新浪财经 2026.05.06</a></span>
+            </div>
+            <div class="source-item" id="source-2">
+                <span style="color: var(--accent); font-weight: 600;">[2]</span>
+                <span>中国30年期国债收益率数据 —— <a href="https://www.ceicdata.com/zh-hans/china/pbc--ccdc-treasury-bond-and-other-bond-yield-daily/bond-yield-treasury-bond-30-year" target="_blank">CEIC 2026.04.30</a></span>
+            </div>
+            <div class="source-item" id="source-3">
+                <span style="color: var(--accent); font-weight: 600;">[3]</span>
+                <span>《2026年险资配置将更加精细化多元化》—— <a href="http://finance.ce.cn/insurance1/scrollnews/202511/t20251127_2606400.shtml" target="_blank">中国经济网 2025.11.27</a></span>
+            </div>
+            <div class="source-item" id="source-4">
+                <span style="color: var(--accent); font-weight: 600;">[4]</span>
+                <span>《2026年专题策略报告：红利策略再审视》—— <a href="https://www.vzkoo.com/read/4663062136698703872.html" target="_blank">慧博投研 2026</a></span>
+            </div>
+            <div class="source-item" id="source-5">
+                <span style="color: var(--accent); font-weight: 600;">[5]</span>
+                <span>China Ultra-Long Special Bond Tenors 2026 —— <a href="https://money.usnews.com/investing/news/articles/2026-04-16/exclusive-china-to-keep-ultra-long-special-bond-tenors-at-20-30-50-year-sources-say" target="_blank">U.S. News 2026.04.16</a></span>
+            </div>
+            <div class="source-item" id="source-6">
+                <span style="color: var(--accent); font-weight: 600;">[6]</span>
+                <span>《告别旧模式！保险资金配置逻辑的六大转变》—— <a href="https://www.21jingji.com/article/20260424/herald/6813b7e006ab54536ee9d24ca8b0d097.html" target="_blank">21经济网 2026.04.24</a></span>
+            </div>
+            <div class="source-item">
+                <span style="color: var(--accent); font-weight: 600;">[7]</span>
+                <span>《多家保险资管机构发声，解析耐心资本2026年配置新变化》—— <a href="https://www.chnfund.com/article/AR61f3a6e7-c6d1-12a2-ac5d-3a1e5cccbd9b" target="_blank">中国基金报 2025.12.23</a></span>
+            </div>
+            <div class="source-item">
+                <span style="color: var(--accent); font-weight: 600;">[8]</span>
+                <span>中证红利指数股息率数据 —— <a href="https://www.lixinger.com/equity/index/detail/sh/000922/922/fundamental/valuation/dyr" target="_blank">理杏仁 2026.05.11</a></span>
+            </div>
+        </div>
+
+        <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+            🤖 本报告由 AI Agent 自动生成 | 数据搜索 → 多源整合 → 分析编译 → 交互式网页呈现 | 全流程耗时约3分钟
+        </p>
+    </section>
+
+</main>
+
+<!-- ========== JAVASCRIPT ========== -->
+<script>
+// Collapsible toggle
+function toggleCollapse(header) {
+    const collapsible = header.parentElement;
+    collapsible.classList.toggle('open');
+}
+
+// Tab switching
+function switchTab(tabId, btn) {
+    const section = btn.closest('.section');
+    section.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    section.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+}
+
+// Client profile switching
+function switchClient(type) {
+    // Update sidebar tabs
+    document.querySelectorAll('.client-tab').forEach(t => t.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    // Update profile content
+    document.querySelectorAll('.client-profile').forEach(p => p.style.display = 'none');
+    document.getElementById('profile-' + type).style.display = 'block';
+}
+
+// Navigation
+function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Active nav tracking
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observerOptions = { rootMargin: '-20% 0px -60% 0px' };
+const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const id = entry.target.id;
+            navItems.forEach(item => {
+                item.classList.toggle('active', item.getAttribute('onclick')?.includes(id));
+            });
+        }
+    });
+}, observerOptions);
+
+sections.forEach(section => navObserver.observe(section));
+
+// Animate bars on scroll
+const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.querySelectorAll('.bar-fill').forEach(bar => {
+                bar.style.width = bar.style.width; // trigger reflow
+            });
+        }
+    });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.bar-chart').forEach(chart => barObserver.observe(chart));
+</script>
+
+</body>
+</html>
