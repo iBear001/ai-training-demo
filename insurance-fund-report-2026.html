@@ -285,6 +285,7 @@
     <a class="nav-item" onclick="scrollToSection('strategy')">配置策略</a>
     <a class="nav-item" onclick="scrollToSection('recommendation')">个性化建议</a>
     <a class="nav-item" onclick="scrollToSection('risk')">风险提示</a>
+    <a class="nav-item" onclick="scrollToSection('boundary')">能力边界</a>
     <a class="nav-item" onclick="scrollToSection('sources')">数据来源</a>
 </nav>
 
@@ -792,6 +793,143 @@
         <div class="card" style="margin-top: 1rem; background: #fffbeb; border-color: #f6e05e;">
             <p style="font-size: 0.85rem; color: #744210; margin: 0;">
                 <strong>⚠️ 免责声明：</strong>本报告仅供内部学习参考，不构成任何投资建议。市场有风险，投资需谨慎。数据截至2026年5月，实际配置需根据客户KYC评估结果和市场最新变化调整。
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== SECTION: 能力边界 ===== -->
+    <section class="section" id="boundary">
+        <h2 class="section-title">🚦 能力边界：AI 能做什么 & 找谁做</h2>
+        <div class="section-divider"></div>
+
+        <div class="card" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%); color: #fff; border: none; text-align: center;">
+            <p style="font-size: 1.05rem; font-weight: 600; margin: 0;">AI 是你的超级副驾驶 🏎️</p>
+            <p style="font-size: 0.85rem; opacity: 0.8; margin: 0.3rem 0 0 0;">你负责方向盘，AI帮你加速。但公路、红绿灯和加油站——是IT团队帮你建的。</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" style="margin-top: 1.5rem;">
+            <button class="tab-btn active" onclick="switchTab('tab-self', this)">✅ 自己就能做</button>
+            <button class="tab-btn" onclick="switchTab('tab-it', this)">🙋 找IT团队做</button>
+            <button class="tab-btn" onclick="switchTab('tab-redline', this)">🚫 红线</button>
+        </div>
+
+        <div id="tab-self" class="tab-content active">
+            <div class="card" style="border-left: 4px solid var(--success);">
+                <h3 style="font-size: 0.95rem; color: var(--success); margin-bottom: 0.75rem;">✅ 个人效率提升 — 自己动手，马上见效</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <div style="font-size: 0.85rem; padding: 0.5rem; background: var(--surface); border-radius: 6px;">
+                        <strong>📝 文档写作</strong><br>
+                        <span style="color: var(--text-secondary);">报告、邮件、方案、纪要</span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.5rem; background: var(--surface); border-radius: 6px;">
+                        <strong>🔍 信息搜索</strong><br>
+                        <span style="color: var(--text-secondary);">政策速查、竞品调研、市场分析</span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.5rem; background: var(--surface); border-radius: 6px;">
+                        <strong>📊 数据分析</strong><br>
+                        <span style="color: var(--text-secondary);">Excel处理、趋势分析、图表生成</span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.5rem; background: var(--surface); border-radius: 6px;">
+                        <strong>🎨 内容创作</strong><br>
+                        <span style="color: var(--text-secondary);">文案润色、翻译、PPT大纲</span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.5rem; background: var(--surface); border-radius: 6px;">
+                        <strong>💡 快速原型</strong><br>
+                        <span style="color: var(--text-secondary);">验证想法、做Demo、测试效果</span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.5rem; background: var(--surface); border-radius: 6px;">
+                        <strong>📚 学习辅助</strong><br>
+                        <span style="color: var(--text-secondary);">知识问答、概念解释、考试复习</span>
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem; text-align: center;">这些你今天就可以开始用，不需要找任何人审批 🚀</p>
+            </div>
+        </div>
+
+        <div id="tab-it" class="tab-content">
+            <div class="card" style="border-left: 4px solid var(--accent);">
+                <h3 style="font-size: 0.95rem; color: var(--accent); margin-bottom: 0.75rem;">🙋 需要IT团队支持 — 来找我们，一起做</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                    <div style="font-size: 0.85rem; padding: 0.75rem; background: var(--surface); border-radius: 8px; border-left: 3px solid var(--accent-light);">
+                        <strong>🔗 接入公司数据/系统</strong><br>
+                        <span style="color: var(--text-secondary);">需要对接核保系统、CRM、保单系统的AI应用 → 我们做API对接和权限管控</span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.75rem; background: var(--surface); border-radius: 8px; border-left: 3px solid var(--accent-light);">
+                        <strong>🏢 部门级/公司级工具</strong><br>
+                        <span style="color: var(--text-secondary);">想给整个部门或全公司用的AI工具 → 我们评估、开发、部署、运维</span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.75rem; background: var(--surface); border-radius: 8px; border-left: 3px solid var(--accent-light);">
+                        <strong>🤖 定制化Agent/工作流</strong><br>
+                        <span style="color: var(--text-secondary);">自动出报告、智能客服、审批流自动化 → 我们做技术选型和流程设计</span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.75rem; background: var(--surface); border-radius: 8px; border-left: 3px solid var(--accent-light);">
+                        <strong>🛡️ 安全合规需求</strong><br>
+                        <span style="color: var(--text-secondary);">涉及客户数据、合规审查的AI场景 → 我们确保数据脱敏和安全网关</span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.75rem; background: var(--surface); border-radius: 8px; border-left: 3px solid var(--accent-light);">
+                        <strong>📈 规模化和稳定性</strong><br>
+                        <span style="color: var(--text-secondary);">从Demo到生产、7×24可用、容灾备份 → IT基本功，我们来保障</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="background: #ebf8ff; border-color: #90cdf4; margin-top: 0.75rem;">
+                <p style="font-size: 0.85rem; color: #2a4365; margin: 0; text-align: center;">
+                    <strong>💡 总结：想做个人小工具，自己玩；想做部门级/公司级应用，来找IT团队。</strong><br>
+                    <span style="font-size: 0.8rem;">今天演示的这些效果，背后就是IT团队在做模型选型、平台部署和安全保障。</span>
+                </p>
+            </div>
+        </div>
+
+        <div id="tab-redline" class="tab-content">
+            <div class="card" style="border-left: 4px solid var(--danger);">
+                <h3 style="font-size: 0.95rem; color: var(--danger); margin-bottom: 0.75rem;">🚫 绝对不能做 — AI使用红线</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div style="font-size: 0.85rem; padding: 0.6rem; background: #fff5f5; border-radius: 6px; display: flex; align-items: flex-start; gap: 0.5rem;">
+                        <span>❌</span>
+                        <span><strong>不输入客户敏感信息</strong><br><span style="color: var(--text-secondary);">身份证号、保单号、手机号、银行卡号等个人隐私数据</span></span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.6rem; background: #fff5f5; border-radius: 6px; display: flex; align-items: flex-start; gap: 0.5rem;">
+                        <span>❌</span>
+                        <span><strong>不用外部AI处理公司机密</strong><br><span style="color: var(--text-secondary);">内部财务数据、战略规划、未公开信息 → 只用公司平台</span></span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.6rem; background: #fff5f5; border-radius: 6px; display: flex; align-items: flex-start; gap: 0.5rem;">
+                        <span>❌</span>
+                        <span><strong>不完全依赖AI做合规判断</strong><br><span style="color: var(--text-secondary);">AI输出的法规解读、合规建议必须人工核实</span></span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.6rem; background: #fff5f5; border-radius: 6px; display: flex; align-items: flex-start; gap: 0.5rem;">
+                        <span>❌</span>
+                        <span><strong>不把AI输出当最终结论</strong><br><span style="color: var(--text-secondary);">数字和数据必须验证，AI是副驾驶，你是主驾驶</span></span>
+                    </div>
+                    <div style="font-size: 0.85rem; padding: 0.6rem; background: #fff5f5; border-radius: 6px; display: flex; align-items: flex-start; gap: 0.5rem;">
+                        <span>❌</span>
+                        <span><strong>不私自部署AI服务</strong><br><span style="color: var(--text-secondary);">需要搭建AI应用/接口/数据库 → 走IT团队流程</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="background: #fffff0; border-color: #f6e05e; margin-top: 0.75rem;">
+                <p style="font-size: 0.85rem; color: #744210; margin: 0;">
+                    <strong>🔑 记住：</strong>公司AI平台比外部ChatGPT更安全（数据不外流），日常优先使用公司平台。不确定能不能做的事 → 先问IT团队。
+                </p>
+            </div>
+        </div>
+
+        <!-- CTA: 需求入口 -->
+        <div class="card" style="margin-top: 1.5rem; background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%); border: 2px solid #90cdf4; text-align: center;">
+            <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;">🎯 有AI需求？找我们！</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                觉得AI可以帮你解决某个业务痛点？不确定能不能做？想要定制化工具？
+            </p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <div style="padding: 0.6rem 1.2rem; background: var(--accent); color: #fff; border-radius: 8px; font-size: 0.85rem; font-weight: 500;">
+                    📮 提交需求 → IT-AI团队评估
+                </div>
+                <div style="padding: 0.6rem 1.2rem; background: #fff; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; font-size: 0.85rem; font-weight: 500;">
+                    💬 不确定？先聊聊
+                </div>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem;">
+                流程：你提需求 → 我们评估可行性和安全性 → 协商排期 → 开发上线 → 持续迭代
             </p>
         </div>
     </section>
