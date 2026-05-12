@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026年保险资金配置策略：红利资产 vs 长期国债</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* === MANDATORY BASE STYLES === */
+        html, body { height: 100%; overflow-x: hidden; margin: 0; padding: 0; }
+        html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+        .slide {
+            width: 100vw; height: 100vh; height: 100dvh;
+            overflow: hidden; scroll-snap-align: start;
+            display: flex; flex-direction: column; position: relative;
+        }
+        .slide-content {
+            flex: 1; display: flex; flex-direction: column; justify-content: center;
+            max-height: 100%; overflow: hidden; padding: var(--slide-padding);
+        }
+
+        :root {
+            --title-size: clamp(1.5rem, 5vw, 3.5rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.25rem);
+            --h3-size: clamp(1rem, 2.5vw, 1.5rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.05rem);
+            --small-size: clamp(0.65rem, 1vw, 0.85rem);
+            --slide-padding: clamp(1.5rem, 5vw, 5rem);
+            --content-gap: clamp(0.5rem, 2vw, 1.5rem);
+            --element-gap: clamp(0.25rem, 1vw, 0.75rem);
+
+            /* Swiss Modern - Trust & Professional */
+            --primary: #0A1628;
+            --secondary: #1B3A6B;
+            --accent: #2E86AB;
+            --accent-gold: #D4A853;
+            --surface: #F8F9FA;
+            --surface-alt: #EDF2F7;
+            --text-primary: #1A202C;
+            --text-secondary: #4A5568;
+            --text-light: #718096;
+            --border: #E2E8F0;
+            --success: #38A169;
+            --danger: #E53E3E;
+            --chart-blue: #2E86AB;
+            --chart-gold: #D4A853;
+            --chart-red: #E53E3E;
+            --chart-green: #38A169;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Noto Sans SC', 'DM Sans', sans-serif; color: var(--text-primary); }
+
+        /* === TYPOGRAPHY === */
+        h1 { font-size: var(--title-size); font-weight: 900; line-height: 1.15; margin: 0; letter-spacing: -0.02em; }
+        h2 { font-size: var(--h2-size); font-weight: 700; line-height: 1.2; margin: 0; }
+        h3 { font-size: var(--h3-size); font-weight: 600; line-height: 1.3; margin: 0; }
+        p, li { font-size: var(--body-size); line-height: 1.6; }
+        .small { font-size: var(--small-size); }
+
+        /* === SLIDE STYLES === */
+        .slide-dark { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: #fff; }
+        .slide-light { background: var(--surface); }
+        .slide-alt { background: var(--surface-alt); }
+
+        /* === GRID === */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(0.75rem, 2vw, 1.5rem); }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(0.75rem, 2vw, 1.5rem); }
+        .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(0.5rem, 1.5vw, 1rem); }
+
+        /* === CARDS === */
+        .card {
+            background: #fff; border-radius: 12px; padding: clamp(1rem, 2vw, 1.5rem);
+            border: 1px solid var(--border); transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        .card-dark {
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px; padding: clamp(1rem, 2vw, 1.5rem); backdrop-filter: blur(8px);
+        }
+
+        /* === DATA STYLES === */
+        .metric { text-align: center; }
+        .metric-value { font-size: clamp(1.5rem, 4vw, 3rem); font-weight: 900; line-height: 1; }
+        .metric-label { font-size: var(--small-size); color: var(--text-light); margin-top: 0.25rem; }
+        .metric-blue .metric-value { color: var(--chart-blue); }
+        .metric-gold .metric-value { color: var(--chart-gold); }
+        .metric-green .metric-value { color: var(--chart-green); }
+        .metric-red .metric-value { color: var(--chart-red); }
+
+        /* === TABLE === */
+        .data-table { width: 100%; border-collapse: collapse; font-size: var(--body-size); }
+        .data-table th { 
+            background: var(--secondary); color: #fff; padding: clamp(0.4rem, 1vw, 0.75rem);
+            text-align: left; font-weight: 500; font-size: var(--small-size);
+        }
+        .data-table td { 
+            padding: clamp(0.3rem, 0.8vw, 0.6rem); border-bottom: 1px solid var(--border);
+            font-size: var(--small-size);
+        }
+        .data-table tr:nth-child(even) { background: var(--surface-alt); }
+
+        /* === CHART BAR === */
+        .bar-chart { display: flex; flex-direction: column; gap: clamp(0.3rem, 0.8vw, 0.6rem); }
+        .bar-row { display: flex; align-items: center; gap: 0.5rem; }
+        .bar-label { font-size: var(--small-size); width: clamp(3rem, 8vw, 6rem); text-align: right; flex-shrink: 0; }
+        .bar-track { flex: 1; height: clamp(1.2rem, 2.5vw, 1.8rem); background: var(--surface-alt); border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 0.5rem; font-size: var(--small-size); color: #fff; font-weight: 500; transition: width 1s ease; }
+        .bar-fill-blue { background: linear-gradient(90deg, var(--chart-blue), #4DA8C4); }
+        .bar-fill-gold { background: linear-gradient(90deg, var(--chart-gold), #E8C06A); }
+        .bar-fill-green { background: linear-gradient(90deg, var(--chart-green), #48BB78); }
+        .bar-fill-red { background: linear-gradient(90deg, var(--chart-red), #FC8181); }
+
+        /* === BADGES === */
+        .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: var(--small-size); font-weight: 500; }
+        .badge-blue { background: rgba(46,134,171,0.12); color: var(--chart-blue); }
+        .badge-gold { background: rgba(212,168,83,0.12); color: var(--chart-gold); }
+        .badge-green { background: rgba(56,161,105,0.12); color: var(--chart-green); }
+        .badge-red { background: rgba(229,62,62,0.12); color: var(--chart-red); }
+
+        /* === TAG / PILL === */
+        .tag { font-size: var(--small-size); padding: 0.15rem 0.5rem; border-radius: 4px; background: var(--surface-alt); color: var(--text-secondary); display: inline-block; }
+
+        /* === DIVIDER === */
+        .divider { width: 60px; height: 3px; background: var(--accent); border-radius: 2px; margin: 0.5rem 0; }
+        .divider-gold { background: var(--accent-gold); }
+
+        /* === REVEAL ANIMATIONS === */
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* === NAVIGATION === */
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 1000; transition: width 0.3s; }
+        .nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 1000; }
+        .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s; border: none; padding: 0; }
+        .nav-dot.active { background: var(--accent); transform: scale(1.3); }
+        .slide-dark .nav-dot { background: rgba(255,255,255,0.3); }
+
+        /* === SLIDE COUNTER === */
+        .slide-counter { position: absolute; bottom: 1.5rem; right: 2rem; font-size: var(--small-size); color: var(--text-light); opacity: 0.6; }
+        .slide-dark .slide-counter { color: rgba(255,255,255,0.5); }
+
+        /* === GENERATED TIME === */
+        .generated-badge { position: absolute; top: 1.5rem; right: 2rem; font-size: var(--small-size); opacity: 0.5; }
+
+        /* === COMPARISON === */
+        .vs-divider { display: flex; align-items: center; justify-content: center; padding: 0.5rem; }
+        .vs-circle { width: clamp(2rem, 4vw, 3rem); height: clamp(2rem, 4vw, 3rem); border-radius: 50%; background: var(--accent-gold); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--body-size); }
+
+        /* === FLOW CHART === */
+        .flow-steps { display: flex; align-items: center; gap: clamp(0.3rem, 1vw, 0.75rem); flex-wrap: wrap; justify-content: center; }
+        .flow-step { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; padding: clamp(0.5rem, 1vw, 0.75rem) clamp(0.75rem, 1.5vw, 1rem); text-align: center; font-size: var(--small-size); font-weight: 500; }
+        .flow-arrow { font-size: var(--body-size); color: var(--accent); }
+        .flow-step-highlight { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* === RESPONSIVE === */
+        @media (max-height: 700px) {
+            :root { --slide-padding: clamp(1rem, 3vw, 2.5rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); --h2-size: clamp(1rem, 3vw, 1.75rem); }
+        }
+        @media (max-height: 600px) {
+            :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --content-gap: clamp(0.3rem, 1vw, 0.75rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); }
+            .nav-dots { display: none; }
+        }
+        @media (max-width: 600px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .flow-steps { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+            html { scroll-behavior: auto; }
+        }
+
+        /* === SPECIAL: GLOW ACCENT (subtle) === */
+        .glow-accent { box-shadow: 0 0 30px rgba(46,134,171,0.15); }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+    <!-- Navigation Dots -->
+    <div class="nav-dots" id="navDots"></div>
+
+    <!-- ========== SLIDE 1: TITLE ========== -->
+    <div class="slide slide-dark">
+        <div class="slide-content" style="align-items: center; text-align: center; gap: var(--content-gap);">
+            <div class="reveal">
+                <div class="badge badge-blue" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); margin-bottom: 0.5rem;">AI 深度调研报告</div>
+            </div>
+            <h1 class="reveal reveal-delay-1">2026年保险资金配置策略</h1>
+            <h2 class="reveal reveal-delay-2" style="font-weight: 400; opacity: 0.8; font-size: var(--h3-size);">红利资产 vs 长期国债 · 大类资产配置新范式</h2>
+            <div class="divider reveal reveal-delay-3" style="background: var(--accent-gold); margin: 0.5rem auto;"></div>
+            <p class="reveal reveal-delay-4 small" style="opacity: 0.5;">数据来源：中国银保监会、中证指数公司、Wind | 生成时间：2026年5月12日</p>
+        </div>
+        <div class="slide-counter">1 / 10</div>
+    </div>
+
+    <!-- ========== SLIDE 2: 市场背景 ========== -->
+    <div class="slide slide-light">
+        <div class="slide-content" style="gap: var(--content-gap);">
+            <div class="reveal">
+                <div class="tag">宏观背景</div>
+                <h2 style="margin-top: 0.3rem;">2026年：低利率时代的配置困局</h2>
+                <div class="divider"></div>
+            </div>
+            <div class="grid-3 reveal reveal-delay-1">
+                <div class="card metric">
+                    <div class="metric-value metric-blue" style="color: var(--chart-blue);">38.5万亿</div>
+                    <div class="metric-label">保险资金运用余额<br>(2025年末)</div>
+                </div>
+                <div class="card metric">
+                    <div class="metric-value" style="color: var(--chart-gold);">2.218%</div>
+                    <div class="metric-label">30年国债收益率<br>(2026年4月)</div>
+                </div>
+                <div class="card metric">
+                    <div class="metric-value" style="color: var(--chart-green);">4.89%</div>
+                    <div class="metric-label">中证红利指数股息率<br>(2026年4月)</div>
+                </div>
+            </div>
+            <div class="reveal reveal-delay-2" style="margin-top: var(--element-gap);">
+                <div class="card" style="background: var(--surface-alt); border: none;">
+                    <p style="margin: 0;"><strong>核心矛盾：</strong>保险负债成本（3%-5%）vs 新增固收资产收益率持续下行 → 传统"配债赚票息"模式不可持续</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-counter">2 / 10</div>
+    </div>
+
+    <!-- ========== SLIDE 3: 配置全景 ========== -->
+    <div class="slide slide-alt">
+        <div class="slide-content" style="gap: var(--content-gap);">
+            <div class="reveal">
+                <div class="tag">资产配置</div>
+                <h2 style="margin-top: 0.3rem;">2026年保险资金配置全景</h2>
+                <div class="divider"></div>
+            </div>
+            <div class="reveal reveal-delay-1">
+                <p class="small" style="color: var(--text-secondary); margin-bottom: 0.5rem;">预计2026年末资金运用余额 <strong>41.95万亿</strong>，新增增量 <strong>4.86万亿</strong></p>
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <span class="bar-label">债券</span>
+                        <div class="bar-track"><div class="bar-fill bar-fill-blue" style="width: 52%;">52% (+3.11万亿)</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">股票</span>
+                        <div class="bar-track"><div class="bar-fill bar-fill-gold" style="width: 22.4%; min-width: 100px;">11.2% (+9633亿)</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">存款</span>
+                        <div class="bar-track"><div class="bar-fill bar-fill-red" style="width: 14%;">7% (-1000亿)</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">基金</span>
+                        <div class="bar-track"><div class="bar-fill bar-fill-green" style="width: 11%;">5.5%</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">长期股权</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 15.2%; background: linear-gradient(90deg, #718096, #A0AEC0);">7.6%</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="reveal reveal-delay-2" style="margin-top: var(--element-gap);">
+                <p class="small" style="color: var(--text-light);">📌 趋势：债券仍为基本盘，权益配置持续增加，存款和非标双降</p>
+            </div>
+        </div>
+        <div class="slide-counter">3 / 10</div>
+    </div>
+
+    <!-- ========== SLIDE 4: 红利 vs 国债 ========== -->
+    <div class="slide slide-light">
+        <div class="slide-content" style="gap: var(--content-gap);">
+            <div class="reveal">
+                <div class="tag">核心对比</div>
+                <h2 style="margin-top: 0.3rem;">红利资产 vs 长期国债：谁是更优选？</h2>
+                <div class="divider divider-gold"></div>
+            </div>
+            <div class="grid-2 reveal reveal-delay-1">
+                <!-- 红利资产 -->
+                <div class="card glow-accent" style="border-top: 3px solid var(--chart-gold);">
+                    <h3 style="color: var(--chart-gold);">🏆 红利资产</h3>
+                    <ul style="padding-left: 1.2rem; margin: 0.5rem 0; list-style: none;">
+                        <li style="margin-bottom: 0.3rem;">✅ 股息率 4.89%，远超国债</li>
+                        <li style="margin-bottom: 0.3rem;">✅ 息差 3.13%（vs 10年国债 1.76%）</li>
+                        <li style="margin-bottom: 0.3rem;">✅ 国企改革提升分红率</li>
+                        <li style="margin-bottom: 0.3rem;">✅ 低利率下"安全垫"属性突出</li>
+                        <li style="color: var(--chart-red);">⚠️ 股价波动影响报表</li>
+                    </ul>
+                </div>
+                <!-- 长期国债 -->
+                <div class="card" style="border-top: 3px solid var(--chart-blue);">
+                    <h3 style="color: var(--chart-blue);">🛡️ 长期国债</h3>
+                    <ul style="padding-left: 1.2rem; margin: 0.5rem 0; list-style: none;">
+                        <li style="margin-bottom: 0.3rem;">✅ 久期匹配负债端</li>
+                        <li style="margin-bottom: 0.3rem;">✅ 零信用风险</li>
+                        <li style="margin-bottom: 0.3rem;">✅ 资本占用低</li>
+                        <li style="margin-bottom: 0.3rem;">✅ 报表稳定性好（AC/OCI）</li>
+                        <li style="color: var(--chart-red);">⚠️ 30年国债仅 2.218%，低于负债成本</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="reveal reveal-delay-2" style="text-align: center; margin-top: var(--element-gap);">
+                <p class="small" style="color: var(--text-secondary);"><strong>结论：</strong>非二选一，而是"固收打底 + 红利增收"的杠铃策略</p>
+            </div>
+        </div>
+        <div class="slide-counter">4 / 10</div>
+    </div>
+
+    <!-- ========== SLIDE 5: 配债策略变化 ========== -->
+    <div class="slide slide-dark">
+        <div class="slide-content" style="gap: var(--content-gap);">
+            <div class="reveal">
+                <div class="badge" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);">固收端</div>
+                <h2 style="margin-top: 0.3rem; color: #fff;">2026年配债策略三大变化</h2>
+                <div class="divider" style="background: var(--accent-gold);"></div>
+            </div>
+            <div class="grid-3 reveal reveal-delay-1">
+                <div class="card-dark">
+                    <h3 style="color: var(--accent-gold); font-size: var(--body-size);">① 超长地方债为主力</h3>
+                    <p class="small" style="color: rgba(255,255,255,0.7); margin: 0.3rem 0 0 0;">20-30年地方债较国债利差 18BP，比价优势明显。2026年配置占比达 48.91%</p>
+                </div>
+                <div class="card-dark">
+                    <h3 style="color: var(--accent); font-size: var(--body-size);">② 分红险推动结构调整</h3>
+                    <p class="small" style="color: rgba(255,255,255,0.7); margin: 0.3rem 0 0 0;">分红险适用VFA浮动收费法，可增配二永债（3-5年）和短久期信用债</p>
+                </div>
+                <div class="card-dark">
+                    <h3 style="color: #48BB78; font-size: var(--body-size);">③ 超长国债逢高配置</h3>
+                    <p class="small" style="color: rgba(255,255,255,0.7); margin: 0.3rem 0 0 0;">30年国债心理价位 ≥ 2.3%，等待调整后入场，收益率下行时止盈</p>
+                </div>
+            </div>
+            <div class="reveal reveal-delay-2" style="margin-top: var(--content-gap);">
+                <div class="card-dark" style="text-align: center;">
+                    <p class="small" style="color: rgba(255,255,255,0.8); margin: 0;">
+                        <strong>核心逻辑转变：</strong>固收从"赚票息"转向"服务久期匹配 + 稳定组合底座"
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-counter">5 / 10</div>
+    </div>
+
+    <!-- ========== SLIDE 6: 权益配置新框架 ========== -->
+    <div class="slide slide-light">
+        <div class="slide-content" style="gap: var(--content-gap);">
+            <div class="reveal">
+                <div class="tag">权益端</div>
+                <h2 style="margin-top: 0.3rem;">权益配置"三层结构"</h2>
+                <div class="divider"></div>
+            </div>
+            <div class="reveal reveal-delay-1" style="display: flex; flex-direction: column; gap: var(--element-gap);">
+                <!-- Layer 1 -->
+                <div class="card" style="border-left: 4px solid var(--chart-gold);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="badge badge-gold">底仓</span>
+                        <h3 style="font-size: var(--body-size);">高股息 · 红利价值</h3>
+                    </div>
+                    <p class="small" style="margin: 0.3rem 0 0 0; color: var(--text-secondary);">四大行、电力、煤炭等 | 替代固收的"类债"功能 | 保险重仓银行股占比 49.2%</p>
+                </div>
+                <!-- Layer 2 -->
+                <div class="card" style="border-left: 4px solid var(--chart-blue);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="badge badge-blue">进攻</span>
+                        <h3 style="font-size: var(--body-size);">科技成长 · 新质生产力</h3>
+                    </div>
+                    <p class="small" style="margin: 0.3rem 0 0 0; color: var(--text-secondary);">AI产业链、半导体、创新药 | 追求长期资本利得 | 约 20% 资产用于博取Alpha</p>
+                </div>
+                <!-- Layer 3 -->
+                <div class="card" style="border-left: 4px solid var(--chart-green);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="badge badge-green">稳定</span>
+                        <h3 style="font-size: var(--body-size);">会计友好型 · OCI配置</h3>
+                    </div>
+                    <p class="small" style="margin: 0.3rem 0 0 0; color: var(--text-secondary);">计入OCI科目，市值波动不冲击利润 | 平安900亿+浮盈未计入当期利润 | 兼顾收益与报表</p>
+                </div>
+            </div>
+            <div class="reveal reveal-delay-2" style="text-align: center;">
+                <p class="small" style="color: var(--text-light);">2025年五大上市险企权益增量达 <strong>~1.3万亿</strong>，万亿级结构性迁移</p>
+            </div>
+        </div>
+        <div class="slide-counter">6 / 10</div>
+    </div>
+
+    <!-- ========== SLIDE 7: 六大配置趋势 ========== -->
+    <div class="slide slide-alt">
+        <div class="slide-content" style="gap: var(--content-gap);">
+            <div class="reveal">
+                <div class="tag">趋势总结</div>
+                <h2 style="margin-top: 0.3rem;">保险资金配置逻辑的六大转变</h2>
+                <div class="divider"></div>
+            </div>
+            <div class="grid-2 reveal reveal-delay-1">
+                <div class="card" style="padding: clamp(0.6rem, 1.5vw, 1rem);">
+                    <p class="small" style="margin: 0;"><span style="color: var(--accent); font-weight: 700;">❶</span> 固收底仓：高票息 → <strong>久期+稳定性</strong></p>
+                </div>
+                <div class="card" style="padding: clamp(0.6rem, 1.5vw, 1rem);">
+                    <p class="small" style="margin: 0;"><span style="color: var(--accent); font-weight: 700;">❷</span> 权益配比：边际调整 → <strong>结构性迁移</strong></p>
+                </div>
+                <div class="card" style="padding: clamp(0.6rem, 1.5vw, 1rem);">
+                    <p class="small" style="margin: 0;"><span style="color: var(--accent); font-weight: 700;">❸</span> 权益框架：单一高股息 → <strong>三层结构重构</strong></p>
+                </div>
+                <div class="card" style="padding: clamp(0.6rem, 1.5vw, 1rem);">
+                    <p class="small" style="margin: 0;"><span style="color: var(--accent); font-weight: 700;">❹</span> 会计准则：结果变量 → <strong>前置约束</strong></p>
+                </div>
+                <div class="card" style="padding: clamp(0.6rem, 1.5vw, 1rem);">
+                    <p class="small" style="margin: 0;"><span style="color: var(--accent); font-weight: 700;">❺</span> 另类投资：信用下沉 → <strong>资产质量+战略协同</strong></p>
+                </div>
+                <div class="card" style="padding: clamp(0.6rem, 1.5vw, 1rem);">
+                    <p class="small" style="margin: 0;"><span style="color: var(--accent); font-weight: 700;">❻</span> 定位升级：投资账户 → <strong>长期资本配置中枢</strong></p>
+                </div>
+            </div>
+            <div class="reveal reveal-delay-2" style="text-align: center; margin-top: var(--element-gap);">
+                <p class="small" style="color: var(--text-light);">来源：21经济网·2026.04.24《告别旧模式！保险资金配置逻辑的六大转变》</p>
+            </div>
+        </div>
+        <div class="slide-counter">7 / 10</div>
+    </div>
+
+    <!-- ========== SLIDE 8: 投资建议 ========== -->
+    <div class="slide slide-light">
+        <div class="slide-content" style="gap: var(--content-gap);">
+            <div class="reveal">
+                <div class="tag">策略建议</div>
+                <h2 style="margin-top: 0.3rem;">2026年保险资金配置实操建议</h2>
+                <div class="divider divider-gold"></div>
+            </div>
+            <div class="reveal reveal-delay-1">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">资产类别</th>
+                            <th style="width: 20%;">核心策略</th>
+                            <th style="width: 35%;">具体方向</th>
+                            <th style="width: 15%;">预期收益</th>
+                            <th style="width: 15%;">风险等级</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>超长地方债</strong></td>
+                            <td>久期匹配底仓</td>
+                            <td>20-30年期，利差18BP优于国债</td>
+                            <td>2.4%左右</td>
+                            <td><span class="badge badge-green">低</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>高股息股票</strong></td>
+                            <td>替代固收增收</td>
+                            <td>银行、电力、煤炭、交运</td>
+                            <td>4-6%</td>
+                            <td><span class="badge badge-gold">中</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>科技成长</strong></td>
+                            <td>Alpha来源</td>
+                            <td>AI、半导体、创新药</td>
+                            <td>不确定</td>
+                            <td><span class="badge badge-red">高</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>二永债</strong></td>
+                            <td>分红险账户配置</td>
+                            <td>3-5年期银行二级资本债</td>
+                            <td>2.0-2.5%</td>
+                            <td><span class="badge badge-green">低</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>黄金/另类</strong></td>
+                            <td>多元分散</td>
+                            <td>实物黄金、REITs、ABS</td>
+                            <td>—</td>
+                            <td><span class="badge badge-gold">中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="slide-counter">8 / 10</div>
+    </div>
+
+    <!-- ========== SLIDE 9: 风险提示 ========== -->
+    <div class="slide slide-dark">
+        <div class="slide-content" style="gap: var(--content-gap);">
+            <div class="reveal">
+                <h2 style="color: #fff;">⚠️ 风险提示与关注变量</h2>
+                <div class="divider" style="background: var(--chart-red);"></div>
+            </div>
+            <div class="grid-2 reveal reveal-delay-1">
+                <div class="card-dark" style="border-left: 3px solid var(--chart-red);">
+                    <h3 style="color: var(--chart-red); font-size: var(--body-size);">下行风险</h3>
+                    <ul style="padding-left: 1rem; margin: 0.3rem 0; color: rgba(255,255,255,0.8);" class="small">
+                        <li>利率中枢继续下行 → 再投资风险</li>
+                        <li>地缘冲突升级 → 权益市场波动</li>
+                        <li>分红险销售不及预期</li>
+                        <li>偿付能力承压限制配置空间</li>
+                    </ul>
+                </div>
+                <div class="card-dark" style="border-left: 3px solid var(--chart-green);">
+                    <h3 style="color: var(--chart-green); font-size: var(--body-size);">上行催化</h3>
+                    <ul style="padding-left: 1rem; margin: 0.3rem 0; color: rgba(255,255,255,0.8);" class="small">
+                        <li>PPI回升 → 顺周期板块机会</li>
+                        <li>"十五五"政策刺激内需复苏</li>
+                        <li>国企改革分红率继续提升</li>
+                        <li>IFRS 17全面实施利好分红险</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="reveal reveal-delay-2" style="margin-top: var(--content-gap);">
+                <div class="card-dark" style="text-align: center;">
+                    <p class="small" style="color: rgba(255,255,255,0.7); margin: 0;">
+                        <strong>核心关注：</strong>30年国债收益率是否企稳 2.3%+ | 中证红利股息率能否维持 4.5%+ | 偿付能力监管考核切换节奏
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-counter">9 / 10</div>
+    </div>
+
+    <!-- ========== SLIDE 10: 结论 ========== -->
+    <div class="slide slide-light">
+        <div class="slide-content" style="align-items: center; text-align: center; gap: var(--content-gap);">
+            <div class="reveal">
+                <h2>核心结论</h2>
+                <div class="divider" style="margin: 0.5rem auto;"></div>
+            </div>
+            <div class="reveal reveal-delay-1" style="max-width: 700px;">
+                <div class="card" style="border: 2px solid var(--accent); padding: clamp(1.5rem, 3vw, 2.5rem);">
+                    <p style="font-size: var(--h3-size); font-weight: 600; margin: 0 0 0.5rem 0; color: var(--secondary);">"固收打底，权益增收，<br>杠铃配置，精细管理"</p>
+                    <div class="divider-gold divider" style="margin: 0.5rem auto;"></div>
+                    <p class="small" style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">2026年保险资金正从"投资账户"进阶为"长期资本配置中枢"，<br>红利资产与长期国债不是二选一，而是互为补充的最优解。</p>
+                </div>
+            </div>
+            <div class="reveal reveal-delay-2 flow-steps" style="margin-top: var(--element-gap);">
+                <div class="flow-step">超长地方债<br><span class="small">久期底座</span></div>
+                <span class="flow-arrow">+</span>
+                <div class="flow-step" style="border-color: var(--chart-gold); color: var(--chart-gold);">高股息红利<br><span class="small">收益增强</span></div>
+                <span class="flow-arrow">+</span>
+                <div class="flow-step" style="border-color: var(--chart-blue); color: var(--chart-blue);">科技成长<br><span class="small">Alpha来源</span></div>
+                <span class="flow-arrow">=</span>
+                <div class="flow-step flow-step-highlight">最优解<br><span class="small">杠铃策略</span></div>
+            </div>
+            <div class="reveal reveal-delay-3">
+                <p class="small" style="color: var(--text-light); margin-top: 0.5rem;">本报告由 AI Agent 多源联网搜索 + 数据整合 + HTML演示生成 全链路自动产出</p>
+            </div>
+        </div>
+        <div class="slide-counter">10 / 10</div>
+    </div>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+    (function() {
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const navDotsContainer = document.getElementById('navDots');
+        let currentSlide = 0;
+
+        // Create nav dots
+        slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+            dot.setAttribute('aria-label', `Slide ${i + 1}`);
+            dot.addEventListener('click', () => goToSlide(i));
+            navDotsContainer.appendChild(dot);
+        });
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progress + '%';
+            document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        function goToSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            currentSlide = index;
+            slides[index].scrollIntoView({ behavior: 'smooth' });
+            updateProgress();
+        }
+
+        // Intersection Observer for reveal animations and tracking
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const index = Array.from(slides).indexOf(entry.target);
+                    if (index !== -1) {
+                        currentSlide = index;
+                        updateProgress();
+                    }
+                    entry.target.querySelectorAll('.reveal').forEach(el => {
+                        el.classList.add('visible');
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        slides.forEach(slide => observer.observe(slide));
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                goToSlide(currentSlide + 1);
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                goToSlide(currentSlide - 1);
+            }
+        });
+
+        // Touch/swipe support
+        let touchStartY = 0;
+        document.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; });
+        document.addEventListener('touchend', (e) => {
+            const diff = touchStartY - e.changedTouches[0].clientY;
+            if (Math.abs(diff) > 50) {
+                goToSlide(currentSlide + (diff > 0 ? 1 : -1));
+            }
+        });
+
+        // Initial state
+        updateProgress();
+        slides[0].querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    })();
+    </script>
+</body>
+</html>
